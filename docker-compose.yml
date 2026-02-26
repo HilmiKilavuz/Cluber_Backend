@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # ─── NestJS Application ──────────────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cluber-api
+    restart: unless-stopped
+    ports:
+      - '${APP_PORT:-3000}:3000'
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-cluber}:${POSTGRES_PASSWORD:-cluber_secret}@postgres:5432/${POSTGRES_DB:-cluber_db}?schema=public
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - cluber-network
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run start:dev
+
+  # ─── PostgreSQL Database ─────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: cluber-postgres
+    restart: unless-stopped
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-cluber}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cluber_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-cluber_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-cluber} -d ${POSTGRES_DB:-cluber_db}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cluber-network
+
+  # ─── Redis Cache ─────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: cluber-redis
+    restart: unless-stopped
+    ports:
+      - '${REDIS_PORT:-6379}:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cluber-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  cluber-network:
+    driver: bridge
