@@ -4,6 +4,10 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { PrismaModule } from './common/prisma/prisma.module';
 import { HealthModule } from './modules/health/health.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { ClubsModule } from './modules/clubs/clubs.module';
+import { ChatModule } from './modules/chat/chat.module';
+import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 
 /**
  * Root application module that imports all feature modules
@@ -41,12 +45,19 @@ import { HealthModule } from './modules/health/health.module';
 
     // Feature modules
     HealthModule,
+    AuthModule,
+    ClubsModule,
+    ChatModule,
   ],
   providers: [
     // Apply rate limiting globally
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
     },
   ],
 })

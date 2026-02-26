@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import * as cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 
 /**
  * Bootstrap the NestJS application with security middleware,
@@ -37,6 +38,8 @@ async function bootstrap(): Promise<void> {
       },
     }),
   );
+
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   // Global prefix for all API routes
   app.setGlobalPrefix('api/v1');
