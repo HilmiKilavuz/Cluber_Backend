@@ -10,51 +10,60 @@ import { ChatModule } from './modules/chat/chat.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 
 /**
- * Root application module that imports all feature modules
- * and configures global providers.
+ * Root NestJS module.
+ *
+ * In NestJS, every feature is grouped into modules.
+ * This module wires all feature modules together and configures
+ * application-wide guards/providers.
  */
 @Module({
   imports: [
-    // Global configuration module - loads .env variables
+    // Loads environment variables and makes ConfigService available globally.
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
     }),
 
-    // Rate limiting - prevents brute force and DDoS attacks
+    // Global rate-limit policies to reduce brute-force and abuse traffic.
     ThrottlerModule.forRoot([
       {
+        // Very short window policy (highly sensitive routes).
         name: 'short',
         ttl: 1000,
         limit: 3,
       },
       {
+        // Medium window policy (normal API usage).
         name: 'medium',
         ttl: 10000,
         limit: 20,
       },
       {
+        // Long window policy (overall burst protection).
         name: 'long',
         ttl: 60000,
         limit: 100,
       },
     ]),
 
-    // Database module
+    // Shared Prisma database module.
     PrismaModule,
 
-    // Feature modules
+    // Business feature modules.
     HealthModule,
     AuthModule,
     ClubsModule,
     ChatModule,
   ],
   providers: [
-    // Apply rate limiting globally
+    // Applies throttling guard to every request.
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
+
+    // Applies JWT authentication guard globally.
+    // Public routes can bypass it via @Public() decorator.
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

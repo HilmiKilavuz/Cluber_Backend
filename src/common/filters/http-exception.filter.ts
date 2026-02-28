@@ -9,7 +9,7 @@ import {
 import { Request, Response } from 'express';
 
 /**
- * Interface for the standardized error response body.
+ * Standardized error payload returned to clients.
  */
 interface ErrorResponse {
   statusCode: number;
@@ -20,26 +20,39 @@ interface ErrorResponse {
 }
 
 /**
- * Global HTTP exception filter that catches all HttpExceptions
- * and returns a standardized error response format.
+ * Handles only HttpException instances.
+ *
+ * Why separate this from all-exceptions filter?
+ * - HttpException already contains known HTTP details.
+ * - We can preserve validation/business error messages safely.
  */
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
+  // Logger scoped to this class.
   private readonly logger = new Logger(HttpExceptionFilter.name);
 
+  /**
+   * Converts Nest HttpException into consistent JSON output.
+   */
   catch(exception: HttpException, host: ArgumentsHost): void {
+    // Switch from generic execution context to HTTP context.
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+
+    // HTTP status attached to exception (e.g., 400, 401, 404).
     const status = exception.getStatus();
+
+    // Can be string or object depending on where exception came from.
     const exceptionResponse = exception.getResponse();
 
-    // Extract message from exception response
+    // Safely extract useful message for client.
     const message =
       typeof exceptionResponse === 'object' && 'message' in exceptionResponse
         ? (exceptionResponse as Record<string, unknown>).message
         : exception.message;
 
+    // Build final API error response body.
     const errorResponse: ErrorResponse = {
       statusCode: status,
       message: message as string | string[],
@@ -48,7 +61,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       path: request.url,
     };
 
-    // Log the error with appropriate level
+    // Log severity based on status family.
     if (status >= 500) {
       this.logger.error(
         `${request.method} ${request.url} - ${status}`,
@@ -60,6 +73,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       );
     }
 
+    // Send formatted response.
     response.status(status).json(errorResponse);
   }
 }

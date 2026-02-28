@@ -2,12 +2,17 @@ import { Global, Module } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 
 /**
- * Global Prisma module that provides PrismaService
- * to all modules without needing to import it explicitly.
+ * Global database module.
+ *
+ * @Global() means this module is visible to all other modules
+ * without re-importing it everywhere.
  */
 @Global()
 @Module({
+  // PrismaService is the singleton DB client wrapper.
   providers: [PrismaService],
+
+  // Export PrismaService so other modules can inject it.
   exports: [PrismaService],
 })
 export class PrismaModule {}
