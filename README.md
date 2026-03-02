@@ -8,7 +8,7 @@
 
 Club Connect, kullanıcıların ilgi alanlarına göre kulüp oluşturabileceği, bu kulüplere katılabileceği, gerçek zamanlı sohbet edebileceği ve etkinlikler düzenleyebileceği kapsamlı bir platformdur.
 
-## 🚀 Özellikler
+##  Özellikler
 
 - **Kullanıcı Sistemi**: Kayıt, giriş ve JWT tabanlı kimlik doğrulama
 - **Kulüp Yönetimi**: Kulüp oluşturma, güncelleme, silme ve üye yönetimi
@@ -17,7 +17,7 @@ Club Connect, kullanıcıların ilgi alanlarına göre kulüp oluşturabileceği
 - **Güvenlik**: Rate limiting, input validation, Helmet güvenlik başlıkları
 - **Role-Based Access Control**: Admin, Moderator, Member roller
 
-## 🛠️ Kullanılan Teknolojiler
+##  Kullanılan Teknolojiler
 
 ### Backend
 - **Framework**: NestJS (TypeScript)
@@ -33,19 +33,19 @@ Club Connect, kullanıcıların ilgi alanlarına göre kulüp oluşturabileceği
 - **Container**: Docker & Docker Compose
 - **Node.js**: LTS version
 
-## 📋 Ön Gereksinimler
+##  Ön Gereksinimler
 
 - Node.js (v18+)
 - Docker & Docker Compose
 - PostgreSQL ( lokalde çalıştırmak için)
 - Redis ( lokalde çalıştırmak için)
 
-## 🔧 Kurulum
+##  Kurulum
 
 ### 1. Projeyi Klonlayın
 
 ```bash
-git clone https://github.com/<your-username>/cluber-backend.git
+git clone https://github.com/HilmiKilavuz/Cluber_Backend.git
 cd cluber-backend
 ```
 
@@ -90,7 +90,7 @@ npm run start:dev
 
 Sunucu `http://localhost:3000` adresinde çalışacak.
 
-## 📚 Environment Değişkenleri
+##  Environment Değişkenleri
 
 | Değişken | Açıklama | Varsayılan |
 |----------|----------|------------|
@@ -107,7 +107,7 @@ Sunucu `http://localhost:3000` adresinde çalışacak.
 | `JWT_SECRET` | JWT gizli anahtar | - |
 | `JWT_EXPIRES_IN` | JWT token süresi | 15m |
 
-## 🗂️ Proje Yapısı
+## Proje Yapısı
 
 ```
 src/
@@ -165,7 +165,7 @@ src/
 ### Health
 - `GET /health` - Uygulama sağlık durumu
 
-## 🏗️ Veritabanı Şeması
+##  Veritabanı Şeması
 
 ### User
 - `id` (UUID) - Benzersiz kimlik
@@ -204,7 +204,7 @@ src/
 - `userId` (String) - Gönderen kullanıcı ID
 - `clubId` (String) - Kulüp ID
 
-## 🐳 Docker Komutları
+##  Docker Komutları
 
 ```bash
 # Tüm servisleri build ve başlat
@@ -229,7 +229,7 @@ docker-compose logs -f
 docker-compose logs -f app
 ```
 
-## 🧪 Test
+##  Test
 
 ```bash
 # Unit testleri çalıştır
@@ -242,7 +242,7 @@ npm run test:cov
 npm run test:e2e
 ```
 
-## 📝 Kod Kalitesi
+##  Kod Kalitesi
 
 ```bash
 # Lint
@@ -252,20 +252,17 @@ npm run lint
 npm run format
 ```
 
-## 🔐 Güvenlik Notları
+##  Güvenlik Notları
 
 - `JWT_SECRET` değerini production'da mutlaka değiştirin
 - Veritabanı şifrelerini güçlü tutun
 - `.env` dosyasını asla version control'e atmayın
 - Rate limiting production'da uygun şekilde yapılandırın
 
-## 📄 Lisans
 
-MIT License
+##  Yazar
 
-## 👤 Yazar
-
-Your Name - [GitHub](https://github.com/<your-username>)
+Hilmi Kılavuz - [GitHub](https://github.com/HilmiKilavuz)
 
 ---
 
