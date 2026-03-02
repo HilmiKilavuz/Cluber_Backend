@@ -6,6 +6,8 @@ dist/
 
 # Environment variables
 .env
+.env.local
+.env.production
 
 # IDE
 .vscode/
@@ -30,3 +32,6 @@ prisma/migrations/**/migration_lock.toml
 
 # Docker
 docker-compose.override.yml
+
+# Agent/Sensitive Info (remove from repository)
+agent.md

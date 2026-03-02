@@ -28,7 +28,7 @@ import { JwtPayload } from './interfaces/jwt-payload.interface';
 @Controller('auth')
 export class AuthController {
   // Inject authentication business logic service.
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   /**
    * POST /auth/register
@@ -52,9 +52,10 @@ export class AuthController {
       path: '/',
     });
 
-    // Return only public user data (token stays in cookie).
+    // Return user data and token (frontend expects accessToken in body).
     return {
       user: result.user,
+      accessToken: result.accessToken,
     };
   }
 
@@ -81,9 +82,10 @@ export class AuthController {
       path: '/',
     });
 
-    // Return sanitized user object.
+    // Return sanitized user object and token.
     return {
       user: result.user,
+      accessToken: result.accessToken,
     };
   }
 

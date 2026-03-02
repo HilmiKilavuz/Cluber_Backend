@@ -7,6 +7,8 @@ export interface PublicUser {
   id: string;
   email: string;
   displayName: string;
+  username: string;
+  role: string;
   bio: string | null;
   avatarUrl: string | null;
   interests: string[];

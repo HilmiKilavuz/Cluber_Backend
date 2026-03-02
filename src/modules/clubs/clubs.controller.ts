@@ -24,7 +24,7 @@ import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 @Controller('clubs')
 export class ClubsController {
   // Inject service layer.
-  constructor(private readonly clubsService: ClubsService) {}
+  constructor(private readonly clubsService: ClubsService) { }
 
   /**
    * POST /clubs
@@ -51,6 +51,24 @@ export class ClubsController {
   @Get(':clubId')
   getById(@Param('clubId') clubId: string) {
     return this.clubsService.getClubById(clubId);
+  }
+
+  /**
+   * GET /clubs/slug/:slug
+   * Returns club by slug/name.
+   */
+  @Get('slug/:slug')
+  getBySlug(@Param('slug') slug: string) {
+    return this.clubsService.getClubBySlug(slug);
+  }
+
+  /**
+   * GET /clubs/my/joined
+   * Returns clubs the current user is a member of.
+   */
+  @Get('my/joined')
+  getJoined(@CurrentUser() user: JwtPayload) {
+    return this.clubsService.getJoinedClubs(user.sub);
   }
 
   /**

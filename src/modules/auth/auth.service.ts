@@ -30,7 +30,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   /**
    * Registers a new user account.
@@ -134,6 +134,8 @@ export class AuthService {
       id: user.id,
       email: user.email,
       displayName: user.displayName,
+      username: user.displayName, // Mapping displayName to username for frontend
+      role: 'MEMBER', // Default role for now as it's not in the User model yet
       bio: user.bio,
       avatarUrl: user.avatarUrl,
       interests: user.interests,

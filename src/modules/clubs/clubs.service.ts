@@ -20,7 +20,7 @@ import { UpdateClubDto } from './dto/update-club.dto';
 @Injectable()
 export class ClubsService {
   // Inject Prisma database service.
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   /**
    * Creates a new club and adds creator as ADMIN member.
@@ -109,6 +109,56 @@ export class ClubsService {
     }
 
     return club;
+  }
+
+  /**
+   * Returns a single club by slug (name match).
+   */
+  async getClubBySlug(slug: string) {
+    const club = await this.prisma.club.findUnique({
+      where: { name: slug }, // Assuming name is used as slug for now
+      include: {
+        creator: {
+          select: {
+            id: true,
+            displayName: true,
+          },
+        },
+        _count: {
+          select: {
+            memberships: true,
+          },
+        },
+      },
+    });
+
+    if (!club) {
+      throw new NotFoundException('Club not found');
+    }
+
+    return club;
+  }
+
+  /**
+   * Returns all clubs joined by the current user.
+   */
+  async getJoinedClubs(userId: string) {
+    const memberships = await this.prisma.membership.findMany({
+      where: { userId },
+      include: {
+        club: {
+          include: {
+            _count: {
+              select: {
+                memberships: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return memberships.map((m) => m.club);
   }
 
   /**

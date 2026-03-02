@@ -14,13 +14,13 @@ import { SendMessageDto } from './dto/send-message.dto';
 @Controller('chat')
 export class ChatController {
   // Inject chat business service.
-  constructor(private readonly chatService: ChatService) {}
+  constructor(private readonly chatService: ChatService) { }
 
   /**
-   * GET /chat/:clubId/messages
+   * GET /chat/:clubId
    * Returns recent messages for a club (member-only access).
    */
-  @Get(':clubId/messages')
+  @Get(':clubId')
   getRecentMessages(@Param('clubId') clubId: string, @CurrentUser() user: JwtPayload) {
     return this.chatService.getRecentMessages(clubId, user.sub);
   }

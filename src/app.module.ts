@@ -7,6 +7,7 @@ import { HealthModule } from './modules/health/health.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ClubsModule } from './modules/clubs/clubs.module';
 import { ChatModule } from './modules/chat/chat.module';
+import { EventsModule } from './modules/events/events.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 
 /**
@@ -54,6 +55,7 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
     AuthModule,
     ClubsModule,
     ChatModule,
+    EventsModule,
   ],
   providers: [
     // Applies throttling guard to every request.
@@ -70,4 +72,4 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

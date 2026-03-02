@@ -39,7 +39,7 @@ async function bootstrap(): Promise<void> {
     origin: configService.get<string>('CORS_ORIGIN', 'http://localhost:3001'),
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token', 'x-silent-error'],
   });
 
   // Validate and sanitize request DTOs globally.
