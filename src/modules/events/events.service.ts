@@ -47,6 +47,11 @@ export class EventsService {
                         participants: true,
                     },
                 },
+                participants: {
+                    select: {
+                        userId: true,
+                    },
+                },
             },
             orderBy: { date: 'asc' },
         });

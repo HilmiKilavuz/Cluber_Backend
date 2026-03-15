@@ -264,6 +264,30 @@ export class ClubsService {
   }
 
   /**
+   * Returns all members of a club with user details.
+   */
+  async getClubMembers(clubId: string) {
+    const club = await this.prisma.club.findUnique({ where: { id: clubId } });
+    if (!club) {
+      throw new NotFoundException('Club not found');
+    }
+
+    return this.prisma.membership.findMany({
+      where: { clubId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            displayName: true,
+            avatarUrl: true,
+          },
+        },
+      },
+      orderBy: { joinedAt: 'asc' },
+    });
+  }
+
+  /**
    * Removes user membership from a club.
    */
   async leaveClub(clubId: string, userId: string) {

@@ -94,6 +94,15 @@ export class ClubsController {
   }
 
   /**
+   * GET /clubs/:clubId/members
+   * Returns all members of a club with user details.
+   */
+  @Get(':clubId/members')
+  getMembers(@Param('clubId') clubId: string) {
+    return this.clubsService.getClubMembers(clubId);
+  }
+
+  /**
    * POST /clubs/:clubId/join
    * Adds current user as member to the club.
    */

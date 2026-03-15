@@ -1,13 +1,25 @@
-node_modules
-dist
+# Exclude version control
 .git
 .gitignore
+
+# Exclude env files (injected via docker-compose environment)
 .env
 .env.example
+
+# Exclude docs and config files not needed in image
 *.md
-coverage
 .vscode
 .idea
+coverage
+
+# Exclude docker files themselves
 docker-compose.yml
 docker-compose.override.yml
 Dockerfile
+
+# Exclude dist (will be rebuilt inside container)
+dist
+
+# NOTE: node_modules is intentionally NOT excluded here.
+# We copy node_modules from the host to avoid needing npm registry
+# access during Docker build (network restrictions).
