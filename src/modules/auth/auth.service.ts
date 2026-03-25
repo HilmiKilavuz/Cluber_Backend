@@ -13,6 +13,9 @@ import { LoginDto } from './dto/login.dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { PublicUser } from './interfaces/public-user.interface';
 import { AuthResponse } from './interfaces/auth-response.interface';
+import { MailService } from '../mail/mail.service';
+import { VerifyEmailDto } from './dto/verify-email.dto';
+import * as crypto from 'crypto';
 
 /**
  * Authentication business logic service.
@@ -30,12 +33,13 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly mailService: MailService,
   ) { }
 
   /**
    * Registers a new user account.
    */
-  async register(dto: RegisterDto): Promise<AuthResponse> {
+  async register(dto: RegisterDto): Promise<{ user: PublicUser; message: string }> {
     // Email is normalized to lowercase for uniqueness consistency.
     const existingUser = await this.prisma.user.findUnique({
       where: { email: dto.email.toLowerCase() },
@@ -49,22 +53,52 @@ export class AuthService {
     // Hash password before saving (never store plain passwords).
     const passwordHash = await bcrypt.hash(dto.password, 12);
 
-    // Persist user record in database.
-    const user = await this.prisma.user.create({
-      data: {
+    // Generate a 6-digit verification code.
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
+
+    // Upsert into PendingUser to allow resending/overwriting if they try again before verifying
+    const pendingUser = await this.prisma.pendingUser.upsert({
+      where: { email: dto.email.toLowerCase() },
+      update: {
+        passwordHash,
+        displayName: dto.displayName,
+        verificationCode,
+        expiresAt,
+      },
+      create: {
         email: dto.email.toLowerCase(),
         passwordHash,
         displayName: dto.displayName,
-        bio: dto.bio ?? null,
-        interests: dto.interests ?? [],
+        verificationCode,
+        expiresAt,
       },
     });
 
-    // Create signed JWT and return public profile data.
-    const accessToken = await this.signAccessToken(user.id, user.email);
+    // Send verification email in the background.
+    this.mailService.sendVerificationEmail(pendingUser.email, verificationCode).catch(console.error);
+
+    // [DEV ONLY] Print the code to the terminal to easily copy it!
+    console.log(`\n========================================`);
+    console.log(`[TEST ORTAMI] Yeni Kayıt İsteği`);
+    console.log(`E-Posta: ${dto.email}`);
+    console.log(`Doğrulama Kodu: ${verificationCode}`);
+    console.log(`========================================\n`);
+
     return {
-      accessToken,
-      user: this.toPublicUser(user),
+      user: {
+        id: pendingUser.id,
+        email: pendingUser.email,
+        displayName: pendingUser.displayName,
+        username: pendingUser.displayName,
+        role: 'MEMBER',
+        bio: null,
+        avatarUrl: null,
+        interests: [],
+        createdAt: pendingUser.createdAt,
+        updatedAt: pendingUser.createdAt,
+      },
+      message: 'Verification code sent.',
     };
   }
 
@@ -105,6 +139,49 @@ export class AuthService {
     });
 
     return this.toPublicUser(user);
+  }
+
+  /**
+   * Verifies the email address using the provided code and logs the user in.
+   */
+  async verifyEmail(dto: VerifyEmailDto): Promise<AuthResponse> {
+    const pendingUser = await this.prisma.pendingUser.findUnique({
+      where: { email: dto.email.toLowerCase() },
+    });
+
+    if (!pendingUser) {
+      throw new UnauthorizedException('Invalid email or verification code');
+    }
+
+    if (pendingUser.verificationCode !== dto.code) {
+      throw new UnauthorizedException('Invalid verification code');
+    }
+
+    if (pendingUser.expiresAt < new Date()) {
+      throw new UnauthorizedException('Verification code has expired');
+    }
+
+    // Create the actual user
+    const user = await this.prisma.user.create({
+      data: {
+        email: pendingUser.email,
+        passwordHash: pendingUser.passwordHash,
+        displayName: pendingUser.displayName,
+        bio: null,
+        interests: [],
+      },
+    });
+
+    // Delete the pending user
+    await this.prisma.pendingUser.delete({
+      where: { id: pendingUser.id },
+    });
+
+    const accessToken = await this.signAccessToken(user.id, user.email);
+    return {
+      accessToken,
+      user: this.toPublicUser(user),
+    };
   }
 
   /**

@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { MailModule } from '../mail/mail.module';
 
 /**
  * Authentication feature module.
@@ -31,6 +32,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
         },
       }),
     }),
+    MailModule,
   ],
 
   // HTTP routes for auth operations.

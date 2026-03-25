@@ -15,6 +15,7 @@ import { LoginDto } from './dto/login.dto';
 import { Public } from './decorators/public.decorator';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { VerifyEmailDto } from './dto/verify-email.dto';
 
 /**
  * Authentication HTTP controller.
@@ -38,25 +39,9 @@ export class AuthController {
   @Post('register')
   async register(
     @Body() dto: RegisterDto,
-    @Res({ passthrough: true }) response: Response,
   ) {
-    // Create user + token.
-    const result = await this.authService.register(dto);
-
-    // Store JWT in HttpOnly cookie (cannot be read by JS in browser).
-    response.cookie('access_token', result.accessToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      maxAge: this.authService.getCookieMaxAgeMs(),
-      path: '/',
-    });
-
-    // Return user data and token (frontend expects accessToken in body).
-    return {
-      user: result.user,
-      accessToken: result.accessToken,
-    };
+    // Create user. Wait for email verify to drop the token.
+    return await this.authService.register(dto);
   }
 
   /**
@@ -86,6 +71,35 @@ export class AuthController {
     return {
       user: result.user,
       accessToken: result.accessToken,
+    };
+  }
+
+  /**
+   * POST /auth/verify-email
+   * Verifies a newly registered user's email address and signs them in.
+   */
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Post('verify-email')
+  async verifyEmail(
+    @Body() dto: VerifyEmailDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const result = await this.authService.verifyEmail(dto);
+
+    // Store JWT in HttpOnly cookie (cannot be read by JS in browser).
+    response.cookie('access_token', result.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      maxAge: this.authService.getCookieMaxAgeMs(),
+      path: '/',
+    });
+
+    return {
+      user: result.user,
+      accessToken: result.accessToken,
+      message: 'Email successfully verified',
     };
   }
 

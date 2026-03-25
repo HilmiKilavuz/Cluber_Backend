@@ -8,7 +8,11 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ClubsModule } from './modules/clubs/clubs.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { EventsModule } from './modules/events/events.module';
+import { UsersModule } from './modules/users/users.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
+import { ScheduleModule } from '@nestjs/schedule';
+import { MailModule } from './modules/mail/mail.module';
+import { CronModule } from './modules/cron/cron.module';
 
 /**
  * Root NestJS module.
@@ -56,6 +60,10 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
     ClubsModule,
     ChatModule,
     EventsModule,
+    UsersModule,
+    MailModule,
+    CronModule,
+    ScheduleModule.forRoot(),
   ],
   providers: [
     // Applies throttling guard to every request.
