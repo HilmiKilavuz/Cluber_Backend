@@ -1,4 +1,4 @@
-# 🚀 Club Connect Backend
+#  Club Connect Backend
 
 <div align="center">
 
@@ -17,23 +17,23 @@
 
 ---
 
-## 📖 Proje Hakkında
+##  Proje Hakkında
 
 Club Connect, **ilgi alanlarına dayalı topluluklar oluşturmak, yönetmek ve büyütmek** için tasarlanmış kapsamlı bir backend platformudur. Kullanıcılar kendi ilgi alanlarına göre kulüpler kurabilir, bu topluluklara katılabilir, gerçek zamanlı sohbet edebilir ve etkinlikler organize edebilir.
 
-### 🎯 Temel Değer Önerileri
+###  Temel Değer Önerileri
 
 | Özellik | Açıklama |
 |---------|----------|
-| 🔐 **Güvenli Kimlik Doğrulama** | JWT tabanlı, HttpOnly cookie ile güvenli oturum yönetimi ve e-posta doğrulama |
-| 🏠 **Kulüp Yönetimi** | Tam CRUD operasyonları, üye yönetimi ve rol tabanlı erişim kontrolü |
-| 💬 **Gerçek Zamanlı Sohbet** | Socket.io ile anlık mesajlaşma ve kulüp odaları |
-| 📅 **Etkinlik Organizasyonu** | Etkinlik oluşturma, RSVP sistemi ve otomatik hatırlatmalar |
-| 🛡️ **Enterprise Güvenlik** | Rate limiting, Helmet, input validation ve CSRF koruması |
+|  **Güvenli Kimlik Doğrulama** | JWT tabanlı, HttpOnly cookie ile güvenli oturum yönetimi ve e-posta doğrulama |
+|  **Kulüp Yönetimi** | Tam CRUD operasyonları, üye yönetimi ve rol tabanlı erişim kontrolü |
+|  **Gerçek Zamanlı Sohbet** | Socket.io ile anlık mesajlaşma ve kulüp odaları |
+|  **Etkinlik Organizasyonu** | Etkinlik oluşturma, RSVP sistemi ve otomatik hatırlatmalar |
+|  **Enterprise Güvenlik** | Rate limiting, Helmet, input validation ve CSRF koruması |
 
 ---
 
-## 🛠️ Teknoloji Yığını
+##  Teknoloji Yığını
 
 ### Backend Stack
 
@@ -63,7 +63,7 @@ Club Connect, **ilgi alanlarına dayalı topluluklar oluşturmak, yönetmek ve b
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### 🧰 Kullanılan Teknolojiler
+###  Kullanılan Teknolojiler
 
 | Kategori | Teknoloji | Versiyon |
 |----------|-----------|----------|
@@ -82,7 +82,7 @@ Club Connect, **ilgi alanlarına dayalı topluluklar oluşturmak, yönetmek ve b
 
 ---
 
-## 📂 Proje Yapısı
+##  Proje Yapısı
 
 ```
 cluber-backend/
@@ -131,7 +131,7 @@ cluber-backend/
 
 ---
 
-## 🏗️ Mimari Tasarım
+##  Mimari Tasarım
 
 ### Veritabanı Şeması (ER Diagram)
 
@@ -200,7 +200,7 @@ cluber-backend/
 
 ---
 
-## 🚀 Hızlı Başlangıç
+##  Hızlı Başlangıç
 
 ### Ön Gereksinimler
 
@@ -233,7 +233,7 @@ npm install
 cp .env.example .env
 
 # .env dosyasını düzenleyin
-# ⚠️ Önemli: JWT_SECRET ve veritabanı şifrelerini değiştirin!
+#  Önemli: JWT_SECRET ve veritabanı şifrelerini değiştirin!
 ```
 
 #### 4. Docker ile Çalıştırma (Önerilen)
@@ -263,9 +263,9 @@ Sunucu `http://localhost:3000` adresinde çalışacak.
 
 ---
 
-## 📡 API Endpointleri
+##  API Endpointleri
 
-### 🔐 Authentication
+###  Authentication
 
 | Method | Endpoint | Açıklama | Auth |
 |--------|----------|----------|------|
@@ -275,7 +275,7 @@ Sunucu `http://localhost:3000` adresinde çalışacak.
 | GET | `/auth/profile` | Kullanıcı profilini getir | ✅ |
 | POST | `/auth/verify-email` | E-posta doğrulama | ❌ |
 
-### 🏠 Clubs
+###  Clubs
 
 | Method | Endpoint | Açıklama | Auth |
 |--------|----------|----------|------|
@@ -288,7 +288,7 @@ Sunucu `http://localhost:3000` adresinde çalışacak.
 | POST | `/clubs/:id/leave` | Kulüpten ayrıl | ✅ |
 | GET | `/clubs/:id/members` | Kulüp üyelerini listele | ❌ |
 
-### 📅 Events
+###  Events
 
 | Method | Endpoint | Açıklama | Auth |
 |--------|----------|----------|------|
@@ -299,7 +299,7 @@ Sunucu `http://localhost:3000` adresinde çalışacak.
 | DELETE | `/events/:id` | Etkinliği sil | ✅ |
 | POST | `/events/:id/rsvp` | Etkinliğe katılım | ✅ |
 
-### 💬 WebSocket Events (Chat)
+###  WebSocket Events (Chat)
 
 | Event | Yön | Açıklama |
 |-------|-----|----------|
@@ -310,7 +310,7 @@ Sunucu `http://localhost:3000` adresinde çalışacak.
 | `userJoined` | Server → Client | Kullanıcı katıldı bildirimi |
 | `userLeft` | Server → Client | Kullanıcı ayrıldı bildirimi |
 
-### ❤️ Health Check
+###  Health Check
 
 | Method | Endpoint | Açıklama | Auth |
 |--------|----------|----------|------|
@@ -320,7 +320,7 @@ Sunucu `http://localhost:3000` adresinde çalışacak.
 
 ---
 
-## 🔧 Environment Değişkenleri
+##  Environment Değişkenleri
 
 | Değişken | Açıklama | Varsayılan | Required |
 |----------|----------|------------|----------|
@@ -343,7 +343,7 @@ Sunucu `http://localhost:3000` adresinde çalışacak.
 
 ---
 
-## 🐳 Docker Komutları
+##  Docker Komutları
 
 ```bash
 # Tüm servisleri build ve başlat
@@ -372,7 +372,7 @@ docker-compose logs -f redis
 
 ---
 
-## 🧪 Test
+##  Test
 
 ```bash
 # Unit testleri çalıştır
@@ -387,7 +387,7 @@ npm run test:e2e
 
 ---
 
-## 📏 Kod Kalitesi
+##  Kod Kalitesi
 
 ```bash
 # Lint (ESLint)
@@ -399,9 +399,9 @@ npm run format
 
 ---
 
-## 🔒 Güvenlik Best Practices
+##  Güvenlik Best Practices
 
-> ⚠️ **Önemli**: Production ortamına geçmeden önce aşağıdaki adımları mutlaka uygulayın!
+>  **Önemli**: Production ortamına geçmeden önce aşağıdaki adımları mutlaka uygulayın!
 
 - [ ] `JWT_SECRET` değerini güçlü ve benzersiz bir değerle değiştirin
 - [ ] Veritabanı şifrelerini güçlü tutun (en az 16 karakter)
@@ -413,23 +413,16 @@ npm run format
 
 ---
 
-## 📊 Katkıda Bulunma
+##  Katkıda Bulunma
 
 1. Fork edin (`https://github.com/HilmiKilavuz/Cluber_Backend/fork`)
 2. Feature branch oluşturun (`git checkout -b feature/AmazingFeature`)
 3. Değişiklikleri commit edin (`git commit -m 'Add some AmazingFeature'`)
 4. Branch'i push edin (`git push origin feature/AmazingFeature`)
 5. Pull Request açın
-
 ---
 
-## 📝 Lisans
-
-Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakın.
-
----
-
-## 👨‍💻 Yazar
+##  Yazar
 
 **Hilmi Kılavuz**
 
