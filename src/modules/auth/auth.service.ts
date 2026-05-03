@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   UnauthorizedException,
@@ -15,6 +16,7 @@ import { PublicUser } from './interfaces/public-user.interface';
 import { AuthResponse } from './interfaces/auth-response.interface';
 import { MailService } from '../mail/mail.service';
 import { VerifyEmailDto } from './dto/verify-email.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import * as crypto from 'crypto';
 
 /**
@@ -182,6 +184,43 @@ export class AuthService {
       accessToken,
       user: this.toPublicUser(user),
     };
+  }
+
+  /**
+   * Changes user password after verifying the current password.
+   */
+  async changePassword(userId: string, dto: ChangePasswordDto): Promise<{ message: string }> {
+    // Fetch the user from database.
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    // Verify the current password.
+    const isCurrentPasswordValid = await bcrypt.compare(dto.currentPassword, user.passwordHash);
+    if (!isCurrentPasswordValid) {
+      throw new BadRequestException('Current password is incorrect');
+    }
+
+    // Check if the new password is the same as the current one.
+    const isSamePassword = await bcrypt.compare(dto.newPassword, user.passwordHash);
+    if (isSamePassword) {
+      throw new BadRequestException('New password must be different from the current password');
+    }
+
+    // Hash the new password.
+    const newPasswordHash = await bcrypt.hash(dto.newPassword, 12);
+
+    // Update the user's password.
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash: newPasswordHash },
+    });
+
+    return { message: 'Password changed successfully' };
   }
 
   /**

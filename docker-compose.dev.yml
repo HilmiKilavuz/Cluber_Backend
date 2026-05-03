@@ -16,6 +16,9 @@ services:
       - JWT_SECRET=${JWT_SECRET:-change-this-in-production}
       - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:3001}
       - CHOKIDAR_USEPOLLING=true 
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
     volumes:
       - .:/app
     command: sh -c "npx prisma generate && npm run start:dev"

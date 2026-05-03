@@ -15,8 +15,8 @@ RUN node_modules/.bin/prisma generate
 RUN node_modules/.bin/nest build
 
 # Remove devDependencies to shrink the production node_modules
-# npm prune does NOT need network access — it just deletes existing packages
-RUN npm prune --omit=dev
+# --legacy-peer-deps bypasses peer dependency version conflicts (mixed NestJS v10/v11)
+RUN npm prune --omit=dev --legacy-peer-deps
 
 # ─── Stage 2: Production ─────────────────────────────────────────────────────
 FROM node:20-alpine AS production

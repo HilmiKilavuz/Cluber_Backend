@@ -12,6 +12,7 @@ import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { Public } from './decorators/public.decorator';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
@@ -125,6 +126,19 @@ export class AuthController {
   @Get('me')
   async me(@CurrentUser() user: JwtPayload, @Req() _request: Request) {
     return this.authService.getProfile(user.sub);
+  }
+
+  /**
+   * POST /auth/change-password
+   * Changes the authenticated user's password.
+   */
+  @Post('change-password')
+  @HttpCode(HttpStatus.OK)
+  async changePassword(
+    @Body() dto: ChangePasswordDto,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    return this.authService.changePassword(user.sub, dto);
   }
 }
 

@@ -2,7 +2,9 @@ import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/commo
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
+import { EventQueryDto } from './dto/event-query.dto';
 import { RsvpDto } from './dto/rsvp.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class EventsService {
@@ -32,9 +34,67 @@ export class EventsService {
         });
     }
 
-    async listEvents(clubId?: string) {
+    async listEvents(query: EventQueryDto) {
+        const { page = 1, limit = 12, clubId, search } = query;
+        const skip = (page - 1) * limit;
+
+        const where: Prisma.EventWhereInput = {};
+        if (clubId) where.clubId = clubId;
+        if (search) {
+            where.OR = [
+                { title: { contains: search, mode: 'insensitive' } },
+                { description: { contains: search, mode: 'insensitive' } },
+            ];
+        }
+
+        const [data, total] = await Promise.all([
+            this.prisma.event.findMany({
+                where,
+                skip,
+                take: limit,
+                include: {
+                    club: {
+                        select: {
+                            name: true,
+                            imageUrl: true,
+                        },
+                    },
+                    _count: {
+                        select: {
+                            participants: true,
+                        },
+                    },
+                    participants: {
+                        select: {
+                            userId: true,
+                        },
+                    },
+                },
+                orderBy: { date: 'asc' },
+            }),
+            this.prisma.event.count({ where }),
+        ]);
+
+        return {
+            data,
+            meta: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            },
+        };
+    }
+
+    async getParticipatingEvents(userId: string) {
+        const now = new Date();
         return this.prisma.event.findMany({
-            where: clubId ? { clubId } : {},
+            where: {
+                date: { gte: now },
+                participants: {
+                    some: { userId },
+                },
+            },
             include: {
                 club: {
                     select: {

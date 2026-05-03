@@ -8,10 +8,12 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ClubsService } from './clubs.service';
 import { CreateClubDto } from './dto/create-club.dto';
 import { UpdateClubDto } from './dto/update-club.dto';
+import { ClubQueryDto } from './dto/club-query.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 
@@ -40,8 +42,8 @@ export class ClubsController {
    * Returns list of clubs.
    */
   @Get()
-  list() {
-    return this.clubsService.listClubs();
+  list(@Query() query: ClubQueryDto) {
+    return this.clubsService.listClubs(query);
   }
 
   /**
@@ -119,6 +121,20 @@ export class ClubsController {
   @Post(':clubId/leave')
   leave(@Param('clubId') clubId: string, @CurrentUser() user: JwtPayload) {
     return this.clubsService.leaveClub(clubId, user.sub);
+  }
+
+  /**
+   * DELETE /clubs/:clubId/members/:userId
+   * Removes a specific member from the club (creator only).
+   */
+  @HttpCode(HttpStatus.OK)
+  @Delete(':clubId/members/:userId')
+  removeMember(
+    @Param('clubId') clubId: string,
+    @Param('userId') userId: string,
+    @CurrentUser() requester: JwtPayload,
+  ) {
+    return this.clubsService.removeMember(clubId, requester.sub, userId);
   }
 }
 

@@ -8,6 +8,9 @@ import { MemberRole } from '@prisma/client';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CreateClubDto } from './dto/create-club.dto';
 import { UpdateClubDto } from './dto/update-club.dto';
+import { ClubQueryDto } from './dto/club-query.dto';
+import { PaginatedResponse } from '../../common/interfaces/paginated-response.interface';
+import { Prisma } from '@prisma/client';
 
 /**
  * Clubs business logic service.
@@ -39,6 +42,8 @@ export class ClubsService {
         description: dto.description,
         category: dto.category,
         imageUrl: dto.imageUrl ?? null,
+        avatarUrl: dto.avatarUrl ?? null,
+        bannerUrl: dto.bannerUrl ?? null,
         creatorId: userId,
         memberships: {
           create: {
@@ -54,26 +59,58 @@ export class ClubsService {
   }
 
   /**
-   * Returns all clubs ordered by newest first.
+   * Returns all clubs ordered by newest first with pagination and filtering.
    */
-  async listClubs() {
-    return this.prisma.club.findMany({
-      orderBy: { createdAt: 'desc' },
-      include: {
-        creator: {
-          select: {
-            id: true,
-            displayName: true,
-            email: true,
+  async listClubs(query: ClubQueryDto) {
+    const { page = 1, limit = 12, search, category } = query;
+    const skip = (page - 1) * limit;
+
+    const where: Prisma.ClubWhereInput = {};
+
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    if (category && category !== 'Tümü') {
+      where.category = category;
+    }
+
+    const [data, total] = await Promise.all([
+      this.prisma.club.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+        include: {
+          creator: {
+            select: {
+              id: true,
+              displayName: true,
+              email: true,
+            },
+          },
+          _count: {
+            select: {
+              memberships: true,
+            },
           },
         },
-        _count: {
-          select: {
-            memberships: true,
-          },
-        },
+      }),
+      this.prisma.club.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
       },
-    });
+    };
   }
 
   /**
@@ -202,6 +239,8 @@ export class ClubsService {
         description: dto.description,
         category: dto.category,
         imageUrl: dto.imageUrl,
+        avatarUrl: dto.avatarUrl,
+        bannerUrl: dto.bannerUrl,
         isActive: dto.isActive,
       },
     });
@@ -307,6 +346,48 @@ export class ClubsService {
     // Delete membership relation.
     await this.prisma.membership.delete({ where: { id: membership.id } });
     return { left: true };
+  }
+
+  /**
+   * Removes a specific member from a club.
+   * Only the club creator (OWNER) can kick members.
+   * Creator cannot kick themselves.
+   */
+  async removeMember(clubId: string, requesterId: string, targetUserId: string) {
+    const club = await this.prisma.club.findUnique({
+      where: { id: clubId },
+      select: { id: true, creatorId: true },
+    });
+
+    if (!club) {
+      throw new NotFoundException('Club not found');
+    }
+
+    // Only creator can remove members.
+    if (club.creatorId !== requesterId) {
+      throw new ForbiddenException('Only the club creator can remove members');
+    }
+
+    // Creator cannot kick themselves.
+    if (targetUserId === requesterId) {
+      throw new ForbiddenException('Creator cannot remove themselves from the club');
+    }
+
+    const membership = await this.prisma.membership.findUnique({
+      where: {
+        userId_clubId: {
+          userId: targetUserId,
+          clubId,
+        },
+      },
+    });
+
+    if (!membership) {
+      throw new NotFoundException('Membership not found');
+    }
+
+    await this.prisma.membership.delete({ where: { id: membership.id } });
+    return { removed: true };
   }
 }
 

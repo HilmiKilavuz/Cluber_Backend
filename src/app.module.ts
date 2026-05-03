@@ -13,6 +13,7 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { ScheduleModule } from '@nestjs/schedule';
 import { MailModule } from './modules/mail/mail.module';
 import { CronModule } from './modules/cron/cron.module';
+import { UploadModule } from './modules/upload/upload.module';
 
 /**
  * Root NestJS module.
@@ -63,6 +64,7 @@ import { CronModule } from './modules/cron/cron.module';
     UsersModule,
     MailModule,
     CronModule,
+    UploadModule,
     ScheduleModule.forRoot(),
   ],
   providers: [

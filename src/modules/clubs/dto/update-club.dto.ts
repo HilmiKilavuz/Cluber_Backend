@@ -27,11 +27,23 @@ export class UpdateClubDto {
   @MaxLength(50)
   category?: string;
 
-  // Optional image URL update.
+  // Optional image URL update (legacy).
   @IsOptional()
   @IsString()
   @MaxLength(500)
   imageUrl?: string;
+
+  // Optional club avatar image URL.
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  avatarUrl?: string;
+
+  // Optional club banner image URL.
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  bannerUrl?: string;
 
   // Optional active/passive state switch.
   @IsOptional()

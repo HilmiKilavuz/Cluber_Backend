@@ -22,10 +22,22 @@ export class CreateClubDto {
   @MaxLength(50)
   category!: string;
 
-  // Optional cover/profile image URL.
+  // Optional cover/profile image URL (legacy).
   @IsOptional()
   @IsString()
   @MaxLength(500)
   imageUrl?: string;
+
+  // Optional club avatar image URL.
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  avatarUrl?: string;
+
+  // Optional club banner image URL.
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  bannerUrl?: string;
 }
 

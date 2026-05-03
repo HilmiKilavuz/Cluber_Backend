@@ -13,6 +13,7 @@ import {
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
+import { EventQueryDto } from './dto/event-query.dto';
 import { RsvpDto } from './dto/rsvp.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
@@ -27,8 +28,13 @@ export class EventsController {
     }
 
     @Get()
-    list(@Query('clubId') clubId?: string) {
-        return this.eventsService.listEvents(clubId);
+    list(@Query() query: EventQueryDto) {
+        return this.eventsService.listEvents(query);
+    }
+
+    @Get('my/participating')
+    getParticipating(@CurrentUser() user: JwtPayload) {
+        return this.eventsService.getParticipatingEvents(user.sub);
     }
 
     @Get(':id')
