@@ -17,6 +17,7 @@ import { EventQueryDto } from './dto/event-query.dto';
 import { RsvpDto } from './dto/rsvp.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
+import { Public } from '../auth/decorators/public.decorator';
 
 @Controller('events')
 export class EventsController {
@@ -27,6 +28,7 @@ export class EventsController {
         return this.eventsService.createEvent(user.sub, dto);
     }
 
+    @Public()
     @Get()
     list(@Query() query: EventQueryDto) {
         return this.eventsService.listEvents(query);
@@ -37,6 +39,7 @@ export class EventsController {
         return this.eventsService.getParticipatingEvents(user.sub);
     }
 
+    @Public()
     @Get(':id')
     getById(@Param('id') id: string) {
         return this.eventsService.getEventById(id);

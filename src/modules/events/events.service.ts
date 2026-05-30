@@ -57,6 +57,7 @@ export class EventsService {
                         select: {
                             name: true,
                             imageUrl: true,
+                            category: true,
                         },
                     },
                     _count: {
@@ -70,7 +71,7 @@ export class EventsService {
                         },
                     },
                 },
-                orderBy: { date: 'asc' },
+                orderBy: { createdAt: 'desc' },
             }),
             this.prisma.event.count({ where }),
         ]);
@@ -100,6 +101,7 @@ export class EventsService {
                     select: {
                         name: true,
                         imageUrl: true,
+                        category: true,
                     },
                 },
                 _count: {

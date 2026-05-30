@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.1",
+    "@nestjs/axios": "^4.0.1",
     "@nestjs/common": "^10.4.15",
     "@nestjs/config": "^4.0.3",
     "@nestjs/core": "^11.1.17",
@@ -40,6 +41,7 @@
     "@nestjs/websockets": "^11.1.17",
     "@prisma/client": "^6.3.1",
     "@types/multer": "^2.1.0",
+    "axios": "^1.16.1",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",

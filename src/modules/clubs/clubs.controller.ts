@@ -16,6 +16,7 @@ import { UpdateClubDto } from './dto/update-club.dto';
 import { ClubQueryDto } from './dto/club-query.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
+import { Public } from '../auth/decorators/public.decorator';
 
 /**
  * Clubs HTTP controller.
@@ -39,8 +40,9 @@ export class ClubsController {
 
   /**
    * GET /clubs
-   * Returns list of clubs.
+   * Returns list of clubs. Public — no auth required.
    */
+  @Public()
   @Get()
   list(@Query() query: ClubQueryDto) {
     return this.clubsService.listClubs(query);
@@ -48,8 +50,9 @@ export class ClubsController {
 
   /**
    * GET /clubs/:clubId
-   * Returns detailed info for one club.
+   * Returns detailed info for one club. Public — no auth required.
    */
+  @Public()
   @Get(':clubId')
   getById(@Param('clubId') clubId: string) {
     return this.clubsService.getClubById(clubId);
@@ -57,8 +60,9 @@ export class ClubsController {
 
   /**
    * GET /clubs/slug/:slug
-   * Returns club by slug/name.
+   * Returns club by slug/name. Public — no auth required.
    */
+  @Public()
   @Get('slug/:slug')
   getBySlug(@Param('slug') slug: string) {
     return this.clubsService.getClubBySlug(slug);

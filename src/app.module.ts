@@ -14,6 +14,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { MailModule } from './modules/mail/mail.module';
 import { CronModule } from './modules/cron/cron.module';
 import { UploadModule } from './modules/upload/upload.module';
+import { AiModule } from './modules/ai/ai.module';
 
 /**
  * Root NestJS module.
@@ -65,6 +66,7 @@ import { UploadModule } from './modules/upload/upload.module';
     MailModule,
     CronModule,
     UploadModule,
+    AiModule,
     ScheduleModule.forRoot(),
   ],
   providers: [
