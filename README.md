@@ -28,6 +28,7 @@ Club Connect, **ilgi alanlarına dayalı topluluklar oluşturmak, yönetmek ve b
 |  **Güvenli Kimlik Doğrulama** | JWT tabanlı, HttpOnly cookie ile güvenli oturum yönetimi ve e-posta doğrulama |
 |  **Kulüp Yönetimi** | Tam CRUD operasyonları, üye yönetimi ve rol tabanlı erişim kontrolü |
 |  **Gerçek Zamanlı Sohbet** | Socket.io ile anlık mesajlaşma ve kulüp odaları |
+| 🤖 **Yapay Zeka Entegrasyonu** | Kullanıcı kulüplerine göre karakter analizi ve AI destekli kulüp önerileri (OpenRouter) |
 |  **Etkinlik Organizasyonu** | Etkinlik oluşturma, RSVP sistemi ve otomatik hatırlatmalar |
 |  **Enterprise Güvenlik** | Rate limiting, Helmet, input validation ve CSRF koruması |
 
@@ -38,13 +39,13 @@ Club Connect, **ilgi alanlarına dayalı topluluklar oluşturmak, yönetmek ve b
 ### Backend Stack
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Application Layer                        │
-│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌───────────┐ │
-│  │   Auth      │ │   Clubs     │ │   Chat      │ │  Events   │ │
-│  │   Module    │ │   Module    │ │   Module    │ │  Module   │ │
-│  └─────────────┘ └─────────────┘ └─────────────┘ └───────────┘ │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│                            Application Layer                            │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────┐ ┌───────┐  │
+│  │   Auth      │ │   Clubs     │ │   Chat      │ │ Events  │ │  AI   │  │
+│  │   Module    │ │   Module    │ │   Module    │ │ Module  │ │ Mod.  │  │
+│  └─────────────┘ └─────────────┘ └─────────────┘ └─────────┘ └───────┘  │
+└─────────────────────────────────────────────────────────────────────────┘
                               │
 ┌─────────────────────────────────────────────────────────────────┐
 │                     Infrastructure Layer                        │
@@ -108,6 +109,7 @@ cluber-backend/
 │   │   ├── 🔵 clubs/                   # Kulüp yönetimi
 │   │   ├── 🟣 chat/                    # WebSocket sohbet
 │   │   ├── 🟠 events/                  # Etkinlik yönetimi
+│   │   ├── 🤖 ai/                      # Yapay zeka servisleri
 │   │   ├── 🔴 health/                  # Health check
 │   │   ├── 🟡 mail/                    # E-posta servisi
 │   │   ├── ⚪ users/                    # Kullanıcı yönetimi
@@ -309,6 +311,12 @@ Sunucu `http://localhost:3000` adresinde çalışacak.
 | `receiveMessage` | Server → Client | Mesaj alma (broadcast) |
 | `userJoined` | Server → Client | Kullanıcı katıldı bildirimi |
 | `userLeft` | Server → Client | Kullanıcı ayrıldı bildirimi |
+
+### 🤖 Yapay Zeka (AI)
+
+| Method | Endpoint | Açıklama | Auth |
+|--------|----------|----------|------|
+| POST | `/ai/profile-insight` | Kullanıcının kulüplerine göre AI karakter yorumu ve kulüp önerisi | ✅ |
 
 ###  Health Check
 
